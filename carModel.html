@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+
+<!-- HTML HEAD ELEMENT - DEFINES CSS FOR THE PAGE -->
+<head>
+	<meta charset="utf-8">
+    <style>
+	    body { background-color: #002200; }
+	    h3,p { color: #FFFF00; }
+	    canvas { background-color: #000044; }
+	    #debugContainer { color: #FFFFFF; position: absolute; z-index: 100;}
+    </style>
+    <title>Car Model</title>
+</head>
+
+<!-- ==================================================================== -->
+
+<!-- HTML BODY TAG - DEFINES THE HTML LAYOUT FOR THE PAGE -->
+<body oncontextmenu="return false;">
+
+<!-- INCLUDE SCRIPTS -->
+<script src="../threejs/build/three.js"></script>
+<script src="gameEngine0.js"></script>
+
+<!-- GAME SPECIFIC INCLUDES -->
+<script src="carModelData.js"></script>
+
+<!-- DEFINE LEFT DIV TAG - FOR DEBUG PRINTOUTS -->
+<div id="debugContainer">
+<pre id="debug"></pre>
+</div>
+
+<!-- MAKE CANVAS AND OTHER STARTING ELEMENTS  -->
+<center>
+	<br/>
+	<canvas id="gameCanvas" width="600" height="400"></canvas>
+	<h3 id="scoreboard">car model</h3>
+</center>
+
+
+<script>
+//----------------------------------------------------------------------//
+// THE MAIN CODE FOR THE GAME
+//----------------------------------------------------------------------//
+
+window.onload = function()
+{
+	// Initialize the engine
+	engine.DEBUG = false;
+	var canvas = document.getElementById("gameCanvas");
+	initEngine(canvas);
+
+	// Parse level0 (into a Three.js scene) and star the game loop
+	parseScene(level0); // upfront loaded Javscript object
+	//loadScene("scene0a.json"); // asynchronous loading of JSON
+	startGameLoop();
+}
+
+//----------------------------------------------------------------------//
+// EVENT HANDLERS
+//----------------------------------------------------------------------//
+
+var carController = function(sceneNode)
+{
+	sceneNode.rotateOnAxis(constants.YAXIS, 0.002);
+
+	var rearWheel1  = sceneNode.getObjectByName( "rearWheel1", true );
+	var rearWheel2  = sceneNode.getObjectByName( "rearWheel2", true );
+	var frontWheel1 = sceneNode.getObjectByName( "frontWheel1", true );
+	var frontWheel2 = sceneNode.getObjectByName( "frontWheel2", true );
+
+	var frontWheelNode1 = sceneNode.getObjectByName( "frontWheelNode1", true );
+	var frontWheelNode2 = sceneNode.getObjectByName( "frontWheelNode2", true );
+
+	// up and down arrow keys
+	var wheelRotation = 0.0;
+	if (engine.pressedKeys[38]) wheelRotation = 0.1;
+	if (engine.pressedKeys[40]) wheelRotation = -0.1;
+
+	if (wheelRotation != 0.0) {
+		rearWheel1.rotateOnAxis(constants.ZAXIS, wheelRotation);
+		rearWheel2.rotateOnAxis(constants.ZAXIS, wheelRotation);
+		frontWheel1.rotateOnAxis(constants.ZAXIS, wheelRotation);
+		frontWheel2.rotateOnAxis(constants.ZAXIS, wheelRotation);
+	}
+
+	// left and right arrow keys
+	var wp = frontWheelNode1.rotation.y;
+
+	var wheelPitch = 0.0;
+	if (engine.pressedKeys[37] && wp>-0.4) wheelPitch = -0.05;
+	if (engine.pressedKeys[39] && wp< 0.4) wheelPitch = 0.05;
+
+	if (wheelPitch != 0.0) {
+		frontWheelNode1.rotateOnAxis(constants.YAXIS, wheelPitch);
+		frontWheelNode2.rotateOnAxis(constants.YAXIS, wheelPitch);
+	}
+
+
+}
+
+</script>
+
+</body>
+</html>
